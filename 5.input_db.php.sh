@@ -80,6 +80,13 @@ foreach($xml_files as $xml_file) {
     //Save to barcodes table
     $barcode_xml = $xml->xpath('/product/barcode');
     save_barcodes($barcode_xml, $product_id);
+
+    // Save to measures v3.0
+    $measure_xml = $xml->xpath('/product/descriptivedetail/measure');
+    save_measures($measure_xml, $product_id);
+
+    // Save to measures v2.1
+    $measure_xml_v2 = $xml->xpath('/product/measure');
 }
 
 
@@ -155,6 +162,46 @@ function save_barcodes($barcode_xml, $product_id)
         $values = implode("', '", array_values($barcode));
 
         $sql = "INSERT INTO barcodes (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
+        $conn->query($sql);
+    }
+}
+
+function save_measures($measure_xml, $product_id)
+{
+    $conn = new Database();
+    $table = 'measures';
+    /*
+    x315    v3.0: descriptivedetail->measure - MeasureType
+    c094    v3.0: descriptivedetail->measure - Measurement
+    c095    v3.0: descriptivedetail->measure - MeasureUnitCode
+     */
+    foreach ($measure_xml as $key => $value) {
+        $x315 = (string) $value->x315;
+        $c094 = (string) $value->c094;
+        $c095 = (string) $value->c095;
+
+        $sql = "SELECT * FROM " . $table . " WHERE x315 = '" . $x315 . "'
+                AND c094 = '" . $c094 . "'
+                AND c094 = '" . $c094 . "'
+                AND c095 = '" . $c095 . "'
+                AND product_id = '" . $product_id . "'";
+        $find_measure = $conn->select($sql);
+        if ($find_measure->num_rows > 0) {
+            continue;
+        }
+
+        $measure = [
+            'x315' => $x315,
+            'c094' => $c094,
+            'c095' => $c095,
+            'product_id' => $product_id,
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s")
+        ];
+        $keys = implode(', ', array_keys($measure));
+        $values = implode("', '", array_values($measure));
+
+        $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
         $conn->query($sql);
     }
 }
