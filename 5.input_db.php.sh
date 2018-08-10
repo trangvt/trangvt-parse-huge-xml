@@ -1,80 +1,70 @@
 #!/usr/bin/php
+
 <?php
-# Create log file
-$error_log = 'error.log';
-if (!file_exists($error_log)) {
-    $fh = fopen($error_log, 'a+');
-    fclose($fh);
-    chmod($error_log, 0777);
-}
+# Instantiate DB
+require 'Database.php';
+$conn = new Database();
 
-$log_file = fopen( $error_log, "a" );
-
-# connect DB
-$servername = "localhost";
-$username = "root";
-$password = "root";
-// $dbname = "ipt.local";
-$dbname = "tpl.local";
-$table = 'products';
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    fwrite($log_file, date("Y-m-d H:i:s").'Connection failed '. $conn->connect_error . PHP_EOL);
-}
-
-# Convert XML Object to Array
-function XMLOject2Array($key, $value)
-{
-    $array_value = [];
-    foreach ($value as $child_key => $child_value ) {
-        if (!empty(trim((string) $child_value))) {
-            $array_value[$child_key] = htmlspecialchars(htmlspecialchars_decode((string) $child_value));
-        } else {
-            $array_value[$child_key][] = [$child_value];
-            XMLOject2Array($child_key, $child_value);
-        }
-    }
-    return $array_value;
-}
+# Instantiate error.log file
+$error_log = new SplFileObject('error.log', "a");
+// $error_log->fwrite($product_xml . PHP_EOL);
 
 # Read files in folder
-$folder_name = 'xml2/';
+$folder_name = 'products/';
 $xml_files = glob($folder_name.'*.xml');
 foreach($xml_files as $xml_file) {
+
     if (!file_exists($xml_file)) {
-        fwrite($log_file, date("Y-m-d H:i:s").' Failed to open file '. $xml_file . PHP_EOL);
+        $error_log->fwrite(date("Y-m-d H:i:s").' Failed to open file '. $xml_file . PHP_EOL);
         continue;
     }
+
+    // Check product
+    $uid = basename($xml_file, '.xml');
+    $sql = "SELECT * FROM products WHERE a001 = '" . $uid . "'";
+    $find_product = $conn->select($sql);
+    if ($find_product->num_rows > 0) {
+        $row = $find_product->fetch_assoc();
+        $product_id = $row["id"];
+        $error_log->fwrite(date("Y-m-d H:i:s") . ' Product exist with UID = '. $uid . PHP_EOL);
+        continue;
+    }
+
+    // Parse data
     $product = [];
     $xml = simplexml_load_file($xml_file);
-    foreach ($xml as $key => $value) {
-        if (!empty(trim((string) $value))) {
-            # Tag doesnt have child tags
-            $product[$key][] = (string) $value;
-        } else {
-            $array_value = XMLOject2Array($key, $value);
-            $product[$key][] = json_encode($array_value);
-        }
-    }
-    $product['created_at'] = [date("Y-m-d H:i:s")];
-    $product['updated_at'] = [date("Y-m-d H:i:s")];
+    /*
+    a001 
+    a002 
+    a194 
+    x314 
+    b012 
+    b057 
+    b058 
+    b083 
+    x450 
+    b061 v2.0: root - NumberOfPages
+     */
+    $product = [
+        'a001' => (string) $xml->a001,
+        'a002' => (string) $xml->a002,
+        'a194' => (string) $xml->a194,
+        'x314' => (string) $xml->descriptivedetail->x314,
+        'b012' => (string) $xml->descriptivedetail->x314,
+        'b057' => (string) $xml->descriptivedetail->b057,
+        'b058' => (string) $xml->descriptivedetail->b058,
+        'b083' => (string) $xml->publishingdetail->salesrights->b089,
+        'x450' => (string) $xml->publishingdetail->salesrights->territory->x450,
+        'b061' => $xml->b061 ? (string) $xml->b061 : 0, 
+        // 'created_at' => date("Y-m-d H:i:s"),
+        // 'updated_at' => date("Y-m-d H:i:s")
+    ];
 
-    $fields= [];
-    $values= [];
-    foreach ($product as $field => $data) {
-        $fields[] = $field;
-        if (count($data) != 1) {
-            $values[] = json_encode($data);
-        } else {
-            $values[]=$data[0];
-        }
-    }
+    // Save to products table
+    $keys = implode(', ', array_keys($product));
+    $values = implode("', '", array_values($product));
+    $sql = "INSERT INTO products (" . $keys . ") VALUES ('" . $values . "')";
+    $product_id = $conn->query($sql);
 
-    $sql = "INSERT INTO " . $table . " (".implode(', ', $fields).") VALUES ('".implode("','", $values)."')";
-    if (!$conn->query($sql)) {
-        fwrite($log_file, date("Y-m-d H:i:s").' Error '. $sql . PHP_EOL . $conn->error . PHP_EOL);
-    }
+    echo $product_id;
 }
-
-fclose($log_file);
