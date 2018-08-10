@@ -38,10 +38,9 @@ foreach($xml_files as $xml_file) {
     a194    RecordSourceType
     x314    v3.0: descriptivedetail - ProductComposition
     b012    v3.0: descriptivedetail - ProductForm
-            v2.1: root - ProductForm
+            v2.1: ProductForm
     b057    v3.0: descriptivedetail - CollectionType
-    b058    v3.0: descriptivedetail - EditionStatement
-            JSON - XHTML is enabled
+    b058    v3.0: descriptivedetail - EditionStatement (JSON - XHTML is enabled)
     b083    v3.0: publishingdetail - CountryOfPublication
     b394    v3.0: publishingdetail - PublishingStatus
     x512    v3.0: publishingdetail->copyrightstatement - CopyrightType
@@ -77,6 +76,10 @@ foreach($xml_files as $xml_file) {
     //Save to productidentifier table
     $productidentifier_xml = $xml->xpath('/product/productidentifier');
     save_productidentifier($productidentifier_xml, $product_id);
+
+    //Save to barcodes table
+    $barcode_xml = $xml->xpath('/product/barcode');
+    save_barcodes($barcode_xml, $product_id);
 }
 
 
@@ -95,7 +98,7 @@ function save_productidentifier($productidentifier_xml, $product_id)
         $b244 = (string) $value->b244;
         $b246 = isset($value->b246) ? (string) $value->b246 : NULL;
 
-        $sql = "SELECT * FROM productidentifier 
+        $sql = "SELECT * FROM productidentifier
                 WHERE b221 = '" . $b221 . "'
                 AND b244 = '" . $b244 . "'
                 AND b246 = '" . $b246 . "'
@@ -117,6 +120,41 @@ function save_productidentifier($productidentifier_xml, $product_id)
         $values = implode("', '", array_values($productidentifier));
 
         $sql = "INSERT INTO productidentifier (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
+        $conn->query($sql);
+    }
+}
+
+function save_barcodes($barcode_xml, $product_id)
+{
+    $conn = new Database();
+    /*
+    x312    v3.0: barcode - BarcodeType
+    x313    v3.0: barcode - PositionOnProduct
+     */
+    foreach ($barcode_xml as $key => $value) {
+        $x312 = (string) $value->x312;
+        $x313 = (string) $value->x313;
+
+        $sql = "SELECT * FROM barcodes
+                WHERE x312 = '" . $x312 . "'
+                AND x313 = '" . $x313 . "'
+                AND product_id = '" . $product_id . "'";
+        $find_barcode = $conn->select($sql);
+        if ($find_barcode->num_rows > 0) {
+            continue;
+        }
+
+        $barcode = [
+            'x312' => $x312,
+            'x313' => $x313,
+            'product_id' => $product_id,
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s")
+        ];
+        $keys = implode(', ', array_keys($barcode));
+        $values = implode("', '", array_values($barcode));
+
+        $sql = "INSERT INTO barcodes (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
         $conn->query($sql);
     }
 }
