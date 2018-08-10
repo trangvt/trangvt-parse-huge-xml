@@ -95,6 +95,10 @@ foreach($xml_files as $xml_file) {
     // Save contributor tags (v3.0)
     $contributor_xml_v3 = $xml->xpath('/product/descriptivedetail/contributor');
     save_contributors_v3($contributor_xml_v3, $product_id);
+
+    // Save supplier tags (v3.0)
+    $supplier_xml = $xml->xpath('/product/descriptivedetail/contributor');
+    save_suppliers($supplier_xml, $product_id);
 }
 
 
@@ -221,6 +225,7 @@ function save_contributors_v3($xml, $product_id)
     $conn = new Database();
     $table = 'contributors';
     $table_relation = 'product_contributor';
+
     /*
     b034    v3.0: descriptivedetail->contributor - SequenceNumber
     b035    v3.0: descriptivedetail->contributor - ContributorRole
@@ -252,7 +257,7 @@ function save_contributors_v3($xml, $product_id)
         $find_resutl = $conn->select($sql);
         if ($find_resutl->num_rows > 0) {
             $row = $find_resutl->fetch_assoc();
-            $contributor_id = $row["id"];
+            $id = $row["id"];
         } else {
             $data = [
                 'b034' => $b034,
@@ -270,21 +275,85 @@ function save_contributors_v3($xml, $product_id)
             $values = implode("', '", array_values($data));
 
             $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
-            if (!isset($contributor_id)) {
-                $contributor_id = $conn->query($sql);
+            if (!isset($id)) {
+                $id = $conn->query($sql);
             }
         }
 
         $sql_relation = "SELECT * FROM " . $table_relation . "
                 WHERE product_id = '" . $product_id . "'
-                AND contributor_id = '" . $contributor_id . "'";
+                AND contributor_id = '" . $id . "'";
         $find_relation = $conn->select($sql_relation);
         if ($find_relation->num_rows > 0) {
             continue;
         }
         $relation = [
             'product_id' => $product_id,
-            'contributor_id' => $contributor_id,
+            'contributor_id' => $id,
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s")
+        ];
+        $keys_relation = implode(', ', array_keys($relation));
+        $values_relation = implode("', '", array_values($relation));
+        $sql_relation = "INSERT INTO " . $table_relation . " (" . $keys_relation . ") VALUES ('" . $values_relation . "')" . PHP_EOL;
+        $conn->query($sql_relation);
+    }
+}
+
+function save_suppliers($xml, $product_id)
+{
+    $conn = new Database();
+    $table = 'suppliers';
+    $table_relation = 'product_supplier';
+
+    /*
+        j292    v3.0 productsupply->supplydetail->supplier - SupplierRole
+        j345    v3.0 productsupply->supplydetail->supplier - SupplierIDType
+        b244    v3.0 productsupply->supplydetail->supplier - IDValue
+        j137    v3.0 productsupply->supplydetail->supplier - SupplierName
+     */
+    foreach ($xml as $key => $value) {
+        $j292 = (string) $value->j292 ? (string) $value->j292 : NULL;
+        $j345 = (string) $value->j345 ? (string) $value->j345 : NULL;
+        $b244 = (string) $value->b244 ? (string) $value->b244 : NULL;
+        $j137 = (string) $value->j137 ? (string) $value->j137 : NULL;
+        $sql = "SELECT * FROM " . $table . "
+                WHERE j292 = '" . $j292 . "'
+                AND j345 = '" . $j345 . "'
+                AND b244 = '" . $b244 . "'
+                AND j137 = '" . $j137 . "';";
+        $find_resutl = $conn->select($sql);
+        if ($find_resutl->num_rows > 0) {
+            $row = $find_resutl->fetch_assoc();
+            $id = $row["id"];
+        } else {
+            $data = [
+                'j292' => $j292,
+                'j345' => $j345,
+                'b244' => $b244,
+                'j137' => $j137,
+                'created_at' => date("Y-m-d H:i:s"),
+                'updated_at' => date("Y-m-d H:i:s")
+            ];
+            $keys = implode(', ', array_keys($data));
+            $values = implode("', '", array_values($data));
+
+            $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
+            if (!isset($id)) {
+                $id = $conn->query($sql);
+            }
+        }
+
+        $sql_relation = "SELECT * FROM " . $table_relation . "
+        WHERE product_id = '" . $product_id . "'
+        AND supplier_id = '" . $id . "'";
+        $find_relation = $conn->select($sql_relation);
+        if ($find_relation->num_rows > 0) {
+            continue;
+        }
+        $relation = [
+            'product_id' => $product_id,
+            'supplier_id' => $id,
             'created_at' => date("Y-m-d H:i:s"),
             'updated_at' => date("Y-m-d H:i:s")
         ];
