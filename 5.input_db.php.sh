@@ -91,6 +91,10 @@ foreach($xml_files as $xml_file) {
     // Save subject tags (v3.0)
     $subject_xml_v3 = $xml->xpath('/product/descriptivedetail/subject');
     save_subjects_v3($subject_xml_v3, $product_id);
+
+    // Save contributor tags (v3.0)
+    $contributor_xml_v3 = $xml->xpath('/product/descriptivedetail/contributor');
+    save_contributors_v3($contributor_xml_v3, $product_id);
 }
 
 
@@ -115,8 +119,8 @@ function save_productidentifier($xml, $product_id)
                 AND b244 = '" . $b244 . "'
                 AND b246 = '" . $b246 . "'
                 AND product_id = '" . $product_id . "'";
-        $find_productidentifier = $conn->select($sql);
-        if ($find_productidentifier->num_rows > 0) {
+        $find_resutl = $conn->select($sql);
+        if ($find_resutl->num_rows > 0) {
             continue;
         }
 
@@ -152,8 +156,8 @@ function save_barcodes($xml, $product_id)
                 WHERE x312 = '" . $x312 . "'
                 AND x313 = '" . $x313 . "'
                 AND product_id = '" . $product_id . "'";
-        $find_barcode = $conn->select($sql);
-        if ($find_barcode->num_rows > 0) {
+        $find_resutl = $conn->select($sql);
+        if ($find_resutl->num_rows > 0) {
             continue;
         }
 
@@ -212,6 +216,85 @@ function save_measures_v3($xml, $product_id)
     }
 }
 
+function save_contributors_v3($xml, $product_id)
+{
+    $conn = new Database();
+    $table = 'contributors';
+    $table_relation = 'product_contributor';
+    /*
+    b034    v3.0: descriptivedetail->contributor - SequenceNumber
+    b035    v3.0: descriptivedetail->contributor - ContributorRole
+    b036    v3.0: descriptivedetail->contributor - PersonName
+    b037    v3.0: descriptivedetail->contributor - PersonNameInverted
+    b038    v3.0: descriptivedetail->contributor - TitlesBeforeNames
+    b039    v3.0: descriptivedetail->contributor - NamesBeforeKey
+    b040    v3.0: descriptivedetail>contributor - KeyNames
+    b041    v3.0: descriptivedetail->contributor - NamesAfterKey
+     */
+    foreach ($xml as $key => $value) {
+        $b034 = isset($value->b034) ? (string) $value->b034 : NULL;
+        $b035 = isset($value->b035) ? (string) $value->b035 : NULL;
+        $b036 = isset($value->b036) ? (string) $value->b036 : NULL;
+        $b037 = isset($value->b037) ? (string) $value->b037 : NULL;
+        $b038 = isset($value->b038) ? (string) $value->b038 : NULL;
+        $b039 = isset($value->b039) ? (string) $value->b039 : NULL;
+        $b040 = isset($value->b040) ? (string) $value->b040 : NULL;
+        $b041 = isset($value->b041) ? (string) $value->b041 : NULL;
+        $sql = "SELECT * FROM " . $table . "
+                WHERE b034 = '" . $b034 . "'
+                AND b035 = '" . $b035 . "'
+                AND b036 = '" . $b036 . "'
+                AND b037 = '" . $b037 . "'
+                AND b038 = '" . $b038 . "'
+                AND b039 = '" . $b039 . "'
+                AND b040 = '" . $b040 . "'
+                AND b041 = '" . $b041 . "';";
+        $find_resutl = $conn->select($sql);
+        if ($find_resutl->num_rows > 0) {
+            $row = $find_resutl->fetch_assoc();
+            $contributor_id = $row["id"];
+        } else {
+            $data = [
+                'b034' => $b034,
+                'b035' => $b035,
+                'b036' => $b036,
+                'b037' => $b037,
+                'b038' => $b038,
+                'b039' => $b039,
+                'b040' => $b040,
+                'b041' => $b041,
+                'created_at' => date("Y-m-d H:i:s"),
+                'updated_at' => date("Y-m-d H:i:s")
+            ];
+            $keys = implode(', ', array_keys($data));
+            $values = implode("', '", array_values($data));
+
+            $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
+            if (!isset($contributor_id)) {
+                $contributor_id = $conn->query($sql);
+            }
+        }
+
+        $sql_relation = "SELECT * FROM " . $table_relation . "
+                WHERE product_id = '" . $product_id . "'
+                AND contributor_id = '" . $contributor_id . "'";
+        $find_relation = $conn->select($sql_relation);
+        if ($find_relation->num_rows > 0) {
+            continue;
+        }
+        $relation = [
+            'product_id' => $product_id,
+            'contributor_id' => $contributor_id,
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s")
+        ];
+        $keys_relation = implode(', ', array_keys($relation));
+        $values_relation = implode("', '", array_values($relation));
+        $sql_relation = "INSERT INTO " . $table_relation . " (" . $keys_relation . ") VALUES ('" . $values_relation . "')" . PHP_EOL;
+        $conn->query($sql_relation);
+    }
+}
+
 function save_subjects_v3($xml, $product_id)
 {
     $conn = new Database();
@@ -231,7 +314,8 @@ function save_subjects_v3($xml, $product_id)
         $b069 = (string) $value->b069 ? (string) $value->b069 : NULL;
         $b070 = (string) $value->b070 ? (string) $value->b070 : NULL;
         $b171 = (string) $value->b171 ? (string) $value->b171 : NULL;
-        $sql = "SELECT * FROM " . $table . " WHERE x425 = '" . $x425 . "'
+        $sql = "SELECT * FROM " . $table . "
+                WHERE x425 = '" . $x425 . "'
                 AND b067 = '" . $b067 . "'
                 AND b068 = '" . $b068 . "'
                 AND b069 = '" . $b069 . "'
@@ -240,7 +324,7 @@ function save_subjects_v3($xml, $product_id)
                 AND product_id = '" . $product_id . "'";
         $find_resutl = $conn->select($sql);
         if ($find_resutl->num_rows > 0) {
-            // continue;
+            continue;
         }
 
         $data = [
