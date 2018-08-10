@@ -73,26 +73,31 @@ foreach($xml_files as $xml_file) {
         $product_id = $conn->query($sql);
     }
 
-    //Save to productidentifier table
+    //Save productidentifier tags (v2.1 & v3.0)
     $productidentifier_xml = $xml->xpath('/product/productidentifier');
     save_productidentifier($productidentifier_xml, $product_id);
 
-    //Save to barcodes table
+    //Save barcode tags (v3.0)
     $barcode_xml = $xml->xpath('/product/barcode');
     save_barcodes($barcode_xml, $product_id);
 
-    // Save to measures v3.0
-    $measure_xml = $xml->xpath('/product/descriptivedetail/measure');
-    save_measures($measure_xml, $product_id);
+    // Save measure tags (v3.0)
+    $measure_xml_v3 = $xml->xpath('/product/descriptivedetail/measure');
+    save_measures_v3($measure_xml_v3, $product_id);
 
-    // Save to measures v2.1
+    // Save measure tags (v2.1)
     $measure_xml_v2 = $xml->xpath('/product/measure');
+
+    // Save subject tags (v3.0)
+    $subject_xml_v3 = $xml->xpath('/product/descriptivedetail/subject');
+    save_subjects_v3($subject_xml_v3, $product_id);
 }
 
 
-function save_productidentifier($productidentifier_xml, $product_id)
+function save_productidentifier($xml, $product_id)
 {
     $conn = new Database();
+    $table = 'productidentifier';
     /*
     b221    v3.0: productidentifier - ProductIDType
             v2.1: productidentifier - ProductIDType
@@ -100,12 +105,12 @@ function save_productidentifier($productidentifier_xml, $product_id)
             v2.1: productidentifier - IDValue
     b246    v2.1: productidentifier - Barcode
      */
-    foreach ($productidentifier_xml as $key => $value) {
+    foreach ($xml as $key => $value) {
         $b221 = (string) $value->b221;
         $b244 = (string) $value->b244;
         $b246 = isset($value->b246) ? (string) $value->b246 : NULL;
 
-        $sql = "SELECT * FROM productidentifier
+        $sql = "SELECT * FROM " . $table . "
                 WHERE b221 = '" . $b221 . "'
                 AND b244 = '" . $b244 . "'
                 AND b246 = '" . $b246 . "'
@@ -115,7 +120,7 @@ function save_productidentifier($productidentifier_xml, $product_id)
             continue;
         }
 
-        $productidentifier = [
+        $data = [
             'b221' => $b221,
             'b244' => $b244,
             'b246' => $b246,
@@ -123,26 +128,27 @@ function save_productidentifier($productidentifier_xml, $product_id)
             'created_at' => date("Y-m-d H:i:s"),
             'updated_at' => date("Y-m-d H:i:s")
         ];
-        $keys = implode(', ', array_keys($productidentifier));
-        $values = implode("', '", array_values($productidentifier));
+        $keys = implode(', ', array_keys($data));
+        $values = implode("', '", array_values($data));
 
-        $sql = "INSERT INTO productidentifier (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
+        $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
         $conn->query($sql);
     }
 }
 
-function save_barcodes($barcode_xml, $product_id)
+function save_barcodes($xml, $product_id)
 {
     $conn = new Database();
+    $table = 'barcodes';
     /*
     x312    v3.0: barcode - BarcodeType
     x313    v3.0: barcode - PositionOnProduct
      */
-    foreach ($barcode_xml as $key => $value) {
+    foreach ($xml as $key => $value) {
         $x312 = (string) $value->x312;
         $x313 = (string) $value->x313;
 
-        $sql = "SELECT * FROM barcodes
+        $sql = "SELECT * FROM " . $table . "
                 WHERE x312 = '" . $x312 . "'
                 AND x313 = '" . $x313 . "'
                 AND product_id = '" . $product_id . "'";
@@ -161,12 +167,12 @@ function save_barcodes($barcode_xml, $product_id)
         $keys = implode(', ', array_keys($barcode));
         $values = implode("', '", array_values($barcode));
 
-        $sql = "INSERT INTO barcodes (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
+        $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
         $conn->query($sql);
     }
 }
 
-function save_measures($measure_xml, $product_id)
+function save_measures_v3($xml, $product_id)
 {
     $conn = new Database();
     $table = 'measures';
@@ -175,22 +181,22 @@ function save_measures($measure_xml, $product_id)
     c094    v3.0: descriptivedetail->measure - Measurement
     c095    v3.0: descriptivedetail->measure - MeasureUnitCode
      */
-    foreach ($measure_xml as $key => $value) {
+    foreach ($xml as $key => $value) {
         $x315 = (string) $value->x315;
         $c094 = (string) $value->c094;
         $c095 = (string) $value->c095;
 
-        $sql = "SELECT * FROM " . $table . " WHERE x315 = '" . $x315 . "'
-                AND c094 = '" . $c094 . "'
+        $sql = "SELECT * FROM " . $table . "
+                WHERE x315 = '" . $x315 . "'
                 AND c094 = '" . $c094 . "'
                 AND c095 = '" . $c095 . "'
                 AND product_id = '" . $product_id . "'";
-        $find_measure = $conn->select($sql);
-        if ($find_measure->num_rows > 0) {
+        $find_resutl = $conn->select($sql);
+        if ($find_resutl->num_rows > 0) {
             continue;
         }
 
-        $measure = [
+        $data = [
             'x315' => $x315,
             'c094' => $c094,
             'c095' => $c095,
@@ -198,8 +204,58 @@ function save_measures($measure_xml, $product_id)
             'created_at' => date("Y-m-d H:i:s"),
             'updated_at' => date("Y-m-d H:i:s")
         ];
-        $keys = implode(', ', array_keys($measure));
-        $values = implode("', '", array_values($measure));
+        $keys = implode(', ', array_keys($data));
+        $values = implode("', '", array_values($data));
+
+        $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
+        $conn->query($sql);
+    }
+}
+
+function save_subjects_v3($xml, $product_id)
+{
+    $conn = new Database();
+    $table = 'subjects';
+    /*
+    x425    v3.0: descriptivedetail->subject - MainSubject
+    b067    v3.0: descriptivedetail->subject - SubjectSchemeIdentifier
+    b068    v3.0: descriptivedetail->subject - SubjectSchemeVersion
+    b069    v3.0: descriptivedetail->subject - SubjectCode
+    b070    v3.0: descriptivedetail->subject - SubjectHeadingText
+    b171    v3.0: descriptivedetail->subject - SubjectSchemeName
+     */
+    foreach ($xml as $key => $value) {
+        $x425 = $value->x425 ? TRUE : FALSE;
+        $b067 = (string) $value->b067;
+        $b068 = (string) $value->b068 ? (string) $value->b068 : NULL;
+        $b069 = (string) $value->b069 ? (string) $value->b069 : NULL;
+        $b070 = (string) $value->b070 ? (string) $value->b070 : NULL;
+        $b171 = (string) $value->b171 ? (string) $value->b171 : NULL;
+        $sql = "SELECT * FROM " . $table . " WHERE x425 = '" . $x425 . "'
+                AND b067 = '" . $b067 . "'
+                AND b068 = '" . $b068 . "'
+                AND b069 = '" . $b069 . "'
+                AND b070 = '" . $b070 . "'
+                AND b171 = '" . $b171 . "'
+                AND product_id = '" . $product_id . "'";
+        $find_resutl = $conn->select($sql);
+        if ($find_resutl->num_rows > 0) {
+            // continue;
+        }
+
+        $data = [
+            'x425' => $x425,
+            'b067' => $b067,
+            'b068' => $b068,
+            'b069' => $b069,
+            'b070' => $b070,
+            'b171' => $b171,
+            'product_id' => $product_id,
+            'created_at' => date("Y-m-d H:i:s"),
+            'updated_at' => date("Y-m-d H:i:s")
+        ];
+        $keys = implode(', ', array_keys($data));
+        $values = implode("', '", array_values($data));
 
         $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "')" . PHP_EOL;
         $conn->query($sql);
