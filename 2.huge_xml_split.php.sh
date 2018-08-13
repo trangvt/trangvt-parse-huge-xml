@@ -7,9 +7,10 @@
 # $onix_feed = fgets($handle);
 # $onix_feed = trim($onix_feed);
 
-$onix_feed_file = "wiley_3.0_1.20180618.xml.xml";
+// $onix_feed_file = "wiley_3.0_1.20180618.xml.xml";
+$onix_feed_file = "wiley.1.20180716.xml";
+# $onix_feed_file = "formarted.xml";
 $onix_feed_path = 'onix_feeds' . DIRECTORY_SEPARATOR . $onix_feed_file;
-# $onix_feed = "formarted.xml";
 
 $error_log = new SplFileObject('errors.log', "a");
 $log_file = new SplFileObject('log.log', "a");
@@ -22,7 +23,7 @@ if(!file_exists($onix_feed_path)){
 }
 
 # START to split
-$log_file->fwrite(date("Y-m-d H:i:s") . ' Start to spit ' . $onix_feed_file . PHP_EOL);
+$log_file->fwrite(date("Y-m-d H:i:s") . ' START to split ' . $onix_feed_file . PHP_EOL);
 
 # Create folder to contains split file
 $spit_product_folder = "products" . DIRECTORY_SEPARATOR . $onix_feed_file;
@@ -39,8 +40,15 @@ if (!file_exists($products_log)) {
     chmod($products_log, 0777);
 }
 $products_log_file = new SplFileObject($products_log, "a");
-# Get lastest product
-$lastest_product = '9780471988038';
+/*
+$products_log_file->seek(PHP_INT_MAX);
+$line_total = $products_log_file->key() - 1;
+
+if ($line_total >= 0) {
+    $products_log_file->seek($line_total);
+    $lastest_product = $products_log_file->current();
+}
+*/
 
 # Parse file
 $lines = new SplFileObject($onix_feed_path);
@@ -53,11 +61,12 @@ if (!file_exists($header_xml_path)) {
     $header_xml_file = new SplFileObject($header_xml_path, "a");
 }
 
+# Reached end of file
 while (!$lines->eof()) {
     $line = $lines->fgets();
 
     if (!empty($header_xml_file)) {
-        // Open header tag
+        # Open header tag
         if (strpos($line, '<header>') !== false) {
             $header_flag = 1;
         }
@@ -66,17 +75,16 @@ while (!$lines->eof()) {
             $header_xml_file->fwrite($line);
         }
 
-        // Close header tag
+        # Close header tag
         if (strpos($line, '</header>') !== false) {
             $header_flag = 0;
             $log_file->fwrite(date("Y-m-d H:i:s") . ' Create ' . $header_xml_path . PHP_EOL);
         }
     }
-
-    // Open product tag
+    
+    # Open product tag
     if (strpos($line, '<product>') !== false) {
         $product_flag = 1;
-        // $product_xml .= $line;
     }
 
     if (($product_flag == 1) && ($line != NULL)) {
@@ -84,25 +92,28 @@ while (!$lines->eof()) {
         if (strpos($line, '<a001>') !== false) {
             $pattern = '/<a001>(.*?)<\/a001>/';
             if (preg_match($pattern, $line, $matches)) {
-                $uid = $matches[1];
-                $single_product_name = $spit_product_folder . DIRECTORY_SEPARATOR . $uid.'.xml';
-                // Log position
-                $products_log_file->fwrite($uid . PHP_EOL);
+                $uuid = $matches[1];
+                $single_product_name = $spit_product_folder . DIRECTORY_SEPARATOR . $uuid.'.xml';
+
+                if (!file_exists($single_product_name)) {
+                    $products_log_file->fwrite(date("Y-m-d H:i:s") . ' Create xml file for product has uuid = ' . $uuid . PHP_EOL);
+                }
             }
         }
         $product_xml .= $line;
     }
 
-    // Close product tag and write file
+    # Close product tag and write file
     if (strpos($line, '</product>') !== false) {
         $product_flag = 0;
-        $product_xml .= '</product>' . PHP_EOL;
-        if (!empty($single_product_name)) {
+        if (!empty($single_product_name) && !file_exists($single_product_name)) {
             $single_product = new SplFileObject($single_product_name, "a");
-            $single_product->fwrite($product_xml . PHP_EOL);
+            $single_product->fwrite($product_xml);
         }
 
-        // Reset
+        # Reset
         $product_xml = '';
     }
 }
+
+$log_file->fwrite(date("Y-m-d H:i:s") . ' END of split ' . $onix_feed_file . PHP_EOL);
