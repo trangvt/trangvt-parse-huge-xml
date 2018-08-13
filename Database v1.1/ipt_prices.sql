@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,28 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `discountcoded`
+-- Table structure for table `prices`
 --
 
-DROP TABLE IF EXISTS `discountcoded`;
+DROP TABLE IF EXISTS `prices`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `discountcoded` (
+CREATE TABLE `prices` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `j363` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0: productsupply>supplydetail>price>discountcoded DiscountCodeType\nv2.1: supplydetail>price>discountcoded DiscountCodeType',
-  `j378` varchar(50) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: productsupply>supplydetail>price>discountcoded DiscountCodeTypeName\nv2.1: supplydetail>price>discountcoded DiscountCodeTypeName',
-  `j364` varchar(45) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0: productsupply>supplydetail>price>discountcoded DiscountCode\nv2.1: supplydetail>price>discountcoded DiscountCode',
+  `x462` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: productsupply>supplydetail>price - PriceType',
+  `j148` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: productsupply>supplydetail>price - PriceTypeCode\nv2.1: supplydetail>price - PriceTypeCode',
+  `j151` varchar(15) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: productsupply>supplydetail>price - PriceQualifier\nv2.1: supplydetail>price - PriceQualifier',
+  `j152` varchar(3) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: productsupply>supplydetail>price - CurrencyCode',
+  `product_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `discountcoded`
+-- Dumping data for table `prices`
 --
 
-LOCK TABLES `discountcoded` WRITE;
-/*!40000 ALTER TABLE `discountcoded` DISABLE KEYS */;
-/*!40000 ALTER TABLE `discountcoded` ENABLE KEYS */;
+LOCK TABLES `prices` WRITE;
+/*!40000 ALTER TABLE `prices` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prices` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

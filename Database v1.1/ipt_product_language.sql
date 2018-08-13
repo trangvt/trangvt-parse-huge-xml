@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,25 +16,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `product_collection`
+-- Table structure for table `product_language`
 --
 
-DROP TABLE IF EXISTS `product_collection`;
+DROP TABLE IF EXISTS `product_language`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `product_collection` (
-  `product_id` int(11) DEFAULT NULL,
-  `collection_id` int(11) DEFAULT NULL
+CREATE TABLE `product_language` (
+  `product_id` int(11) NOT NULL,
+  `language_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `product_collection`
+-- Dumping data for table `product_language`
 --
 
-LOCK TABLES `product_collection` WRITE;
-/*!40000 ALTER TABLE `product_collection` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product_collection` ENABLE KEYS */;
+LOCK TABLES `product_language` WRITE;
+/*!40000 ALTER TABLE `product_language` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product_language` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

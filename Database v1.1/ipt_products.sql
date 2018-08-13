@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 

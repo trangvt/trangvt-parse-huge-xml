@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,30 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `product_supplier`
+-- Table structure for table `product_contributor`
 --
 
-DROP TABLE IF EXISTS `product_supplier`;
+DROP TABLE IF EXISTS `product_contributor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `product_supplier` (
+CREATE TABLE `product_contributor` (
   `product_id` int(11) NOT NULL,
-  `supply_id` int(11) NOT NULL,
-  `j396` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0 productsupply>supplydetail - ProductAvailability',
-  `j144` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0 productsupply>supplydetail - OrderTime',
+  `contributor_id` int(11) NOT NULL,
   `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`product_id`,`supply_id`)
+  `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `product_supplier`
+-- Dumping data for table `product_contributor`
 --
 
-LOCK TABLES `product_supplier` WRITE;
-/*!40000 ALTER TABLE `product_supplier` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product_supplier` ENABLE KEYS */;
+LOCK TABLES `product_contributor` WRITE;
+/*!40000 ALTER TABLE `product_contributor` DISABLE KEYS */;
+INSERT INTO `product_contributor` VALUES (1,1,'2018-08-10 18:02:35','2018-08-10 18:02:35'),(2,2,'2018-08-10 18:02:35','2018-08-10 18:02:35'),(3,3,'2018-08-10 18:02:35','2018-08-10 18:02:35');
+/*!40000 ALTER TABLE `product_contributor` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

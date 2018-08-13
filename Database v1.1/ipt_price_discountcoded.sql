@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,31 +16,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `suppliers`
+-- Table structure for table `price_discountcoded`
 --
 
-DROP TABLE IF EXISTS `suppliers`;
+DROP TABLE IF EXISTS `price_discountcoded`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `suppliers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `j292` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0 productsupply->supplydetail->supplier - SupplierRole',
-  `j345` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0 productsupply->supplydetail->supplier - SupplierIDType',
-  `b244` varchar(45) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0 productsupply->supplydetail->supplier - IDValue',
-  `j137` varchar(100) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0 productsupply->supplydetail->supplier - SupplierName',
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `price_discountcoded` (
+  `price_id` int(11) NOT NULL,
+  `discountcoded_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `suppliers`
+-- Dumping data for table `price_discountcoded`
 --
 
-LOCK TABLES `suppliers` WRITE;
-/*!40000 ALTER TABLE `suppliers` DISABLE KEYS */;
-/*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
+LOCK TABLES `price_discountcoded` WRITE;
+/*!40000 ALTER TABLE `price_discountcoded` DISABLE KEYS */;
+/*!40000 ALTER TABLE `price_discountcoded` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

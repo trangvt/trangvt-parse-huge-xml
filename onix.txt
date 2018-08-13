@@ -1,0 +1,31 @@
+Vấn đề:
+
+1. Huge XML
+Truy cập link http://catalogimages.wiley.com/images/. Tải Abbreviated Monthly Title Update về thì thu được 1 file XML rất lớn (>500MB)
+
+2. ONIX Specifications
+Cấu trúc file XML được định nghĩa theo chuẩn của ONIX
+Hiện tại có 2 version
+v3.0.4: https://www.editeur.org/93/Release-3.0-Downloads/
+	+ ONIX for Books 3.0.4 Specification + Codelists Issue 42
+	 	released October 2017
+		ONIX 3.0 Sample files
+			https://www.editeur.org/files/ONIX%203/ONIX_Books_3.0_sample_4.zip
+
+	+ ONIX for Books 3.0 Acknowledgement Specification (PDF in ZIP)
+	+ ONIX for Books 3.0.4 Specification + Guide + Codelists Issue 42 (HTML in ZIP)
+	 	released January 2015
+v2.1: https://www.editeur.org/15/Archived-Previous-Releases/
+
+
+3. Mục tiêu
+Từ XML lưu data vào DB để có thể đem đi chỗ khác import
+
+=> Cần phải
+	+ Split XML: sẽ tách XML ra mỗi 1 <product> 1 file
+	+ import từng XML 1 vào DB
+	+ DB thiết kế dựa vào v3.0 và v2.1 để có thể lưu tất cả data
+
+4. Thực hiện
+
+https://stackoverflow.com/questions/1652128/accessing-attribute-from-simplexml

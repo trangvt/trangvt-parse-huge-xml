@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,30 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `titledetail`
+-- Table structure for table `languages`
 --
 
-DROP TABLE IF EXISTS `titledetail`;
+DROP TABLE IF EXISTS `languages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `titledetail` (
+CREATE TABLE `languages` (
   `id` int(11) NOT NULL,
-  `b202` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0: descriptivedetail>titledetail - TitleType',
-  `x409` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0: descriptivedetail>titledetail>titleelement - TitleElementLevel',
-  `b203` longtext CHARACTER SET utf8 COMMENT 'v3.0: descriptivedetail>titledetail>titleelement - TitleText',
-  `collection_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
+  `b253` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
+  `b252` varchar(3) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `titledetail`
+-- Dumping data for table `languages`
 --
 
-LOCK TABLES `titledetail` WRITE;
-/*!40000 ALTER TABLE `titledetail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `titledetail` ENABLE KEYS */;
+LOCK TABLES `languages` WRITE;
+/*!40000 ALTER TABLE `languages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `languages` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

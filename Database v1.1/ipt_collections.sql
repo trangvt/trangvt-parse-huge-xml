@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,32 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `productidentifier`
+-- Table structure for table `collections`
 --
 
-DROP TABLE IF EXISTS `productidentifier`;
+DROP TABLE IF EXISTS `collections`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `productidentifier` (
+CREATE TABLE `collections` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `b221` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: productidentifier - ProductIDType\nv2.1: productidentifier - ProductIDType',
-  `b244` varchar(45) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: productidentifier - IDValue\nv2.1: productidentifier - IDValue',
-  `b246` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v2.1: productidentifier - Barcode',
+  `x329` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0: descriptivedetail>collection - CollectionType\nIt is not permissible to have two identifiers of the same type',
+  `x344` varchar(2) COLLATE utf8_unicode_ci NOT NULL COMMENT 'v3.0: descriptivedetail>collection>collectionidentifier - CollectionIDType',
+  `b233` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'v3.0: descriptivedetail>collection>collectionidentifier - IDTypeName',
+  `b244` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'v3.0: descriptivedetail>collection>collectionidentifier - IDValue',
   `product_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `productidentifier`
+-- Dumping data for table `collections`
 --
 
-LOCK TABLES `productidentifier` WRITE;
-/*!40000 ALTER TABLE `productidentifier` DISABLE KEYS */;
-INSERT INTO `productidentifier` VALUES (1,'03','9780471049234','',1,'2018-08-10 15:46:57','2018-08-10 15:46:57'),(2,'15','9780471049234','',1,'2018-08-10 15:46:57','2018-08-10 15:46:57'),(3,'03','9780471374817','',2,'2018-08-10 15:46:57','2018-08-10 15:46:57'),(4,'15','9780471374817','',2,'2018-08-10 15:46:57','2018-08-10 15:46:57'),(5,'03','9780471815242','',3,'2018-08-10 15:46:57','2018-08-10 15:46:57'),(6,'15','9780471815242','',3,'2018-08-10 15:46:57','2018-08-10 15:46:57');
-/*!40000 ALTER TABLE `productidentifier` ENABLE KEYS */;
+LOCK TABLES `collections` WRITE;
+/*!40000 ALTER TABLE `collections` DISABLE KEYS */;
+/*!40000 ALTER TABLE `collections` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

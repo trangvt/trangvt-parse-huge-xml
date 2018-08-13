@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,28 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `product_contributor`
+-- Table structure for table `barcodes`
 --
 
-DROP TABLE IF EXISTS `product_contributor`;
+DROP TABLE IF EXISTS `barcodes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `product_contributor` (
-  `product_id` int(11) NOT NULL,
-  `contributor_id` int(11) NOT NULL,
+CREATE TABLE `barcodes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `x312` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0: barcode - BarcodeType',
+  `x313` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0: barcode - PositionOnProduct',
+  `product_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `product_contributor`
+-- Dumping data for table `barcodes`
 --
 
-LOCK TABLES `product_contributor` WRITE;
-/*!40000 ALTER TABLE `product_contributor` DISABLE KEYS */;
-INSERT INTO `product_contributor` VALUES (1,1,'2018-08-10 18:02:35','2018-08-10 18:02:35'),(2,2,'2018-08-10 18:02:35','2018-08-10 18:02:35'),(3,3,'2018-08-10 18:02:35','2018-08-10 18:02:35');
-/*!40000 ALTER TABLE `product_contributor` ENABLE KEYS */;
+LOCK TABLES `barcodes` WRITE;
+/*!40000 ALTER TABLE `barcodes` DISABLE KEYS */;
+INSERT INTO `barcodes` VALUES (1,'03','01',1,'2018-08-10 15:46:57','2018-08-10 15:46:57'),(2,'03','01',2,'2018-08-10 15:46:57','2018-08-10 15:46:57'),(3,'03','01',3,'2018-08-10 15:46:57','2018-08-10 15:46:57');
+/*!40000 ALTER TABLE `barcodes` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

@@ -17,9 +17,9 @@ class Database
     {
         $this->servername = "localhost";
         $this->username = "root";
-        $this->password = "root";
-        $this->dbname = "tpl";
-        // $this->dbname = "ipt";
+        $this->password = "";
+        $this->dbname = "ipt";
+        // $this->dbname = "onix";
 
         $this->error_log = new SplFileObject('error.log', "a");
 
@@ -49,6 +49,15 @@ class Database
             return;
         }
 
-        return $this->conn->insert_id;
+        return $result;
+        // return $this->conn->insert_id;
+    }
+
+    public function insert($data) {
+        $keys = implode(', ', array_keys($data));
+        $values = implode("', '", array_values($data));
+
+        $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
+        return $this->conn->query($sql);
     }
 }

@@ -2,12 +2,12 @@
 
 <?php
 # Define XML file
-// echo "Please input the XML file name: ";
-// $handle = fopen ("php://stdin","r");
-// $file_name = fgets($handle);
+# echo "Please input the XML file name: ";
+# $handle = fopen ("php://stdin","r");
+# $file_name = fgets($handle);
 
-// $file_name = trim($file_name);
-// $file_name = "wiley_3.0_1.20180618.xml.xml";
+# $file_name = trim($file_name);
+# $file_name = "wiley_3.0_1.20180618.xml.xml";
 $file_name = "formarted.xml";
 $folder_name = "products";
 $products_log = 'products.log';

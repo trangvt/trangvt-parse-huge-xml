@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.23, for Linux (x86_64)
 --
--- Host: localhost    Database: tpl
+-- Host: localhost    Database: ipt
 -- ------------------------------------------------------
 -- Server version	5.7.23-0ubuntu0.18.04.1
 
@@ -16,25 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `price_discountcoded`
+-- Table structure for table `product_supplier`
 --
 
-DROP TABLE IF EXISTS `price_discountcoded`;
+DROP TABLE IF EXISTS `product_supplier`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `price_discountcoded` (
-  `price_id` int(11) NOT NULL,
-  `discountcoded_id` int(11) NOT NULL
+CREATE TABLE `product_supplier` (
+  `product_id` int(11) NOT NULL,
+  `supply_id` int(11) NOT NULL,
+  `j396` varchar(2) CHARACTER SET utf8 NOT NULL COMMENT 'v3.0 productsupply>supplydetail - ProductAvailability',
+  `j144` varchar(2) CHARACTER SET utf8 DEFAULT NULL COMMENT 'v3.0 productsupply>supplydetail - OrderTime',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`product_id`,`supply_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `price_discountcoded`
+-- Dumping data for table `product_supplier`
 --
 
-LOCK TABLES `price_discountcoded` WRITE;
-/*!40000 ALTER TABLE `price_discountcoded` DISABLE KEYS */;
-/*!40000 ALTER TABLE `price_discountcoded` ENABLE KEYS */;
+LOCK TABLES `product_supplier` WRITE;
+/*!40000 ALTER TABLE `product_supplier` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product_supplier` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
