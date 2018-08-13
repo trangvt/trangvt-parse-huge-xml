@@ -9,16 +9,16 @@ if (!file_exists($errors_log)) {
     chmod($errors_log, 0777);
 }
 
-# Create products log file
-$products_log = 'products.log';
-if (!file_exists($products_log)) {
-    $fh = fopen($products_log, 'a+');
+# Create log file
+$log_file = 'log.log';
+if (!file_exists($log_file)) {
+    $fh = fopen($log_file, 'a+');
     fclose($fh);
-    chmod($products_log, 0777);
+    chmod($log_file, 0777);
 }
 
 # Create folder
-$folder_name = "products";
-if (!file_exists($folder_name)) {
-    mkdir($folder_name, 0777, true);
+$product_folder = "products";
+if (!file_exists($product_folder)) {
+    mkdir($product_folder, 0777, true);
 }

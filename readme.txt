@@ -1,1 +1,0 @@
-XML need to have a good format

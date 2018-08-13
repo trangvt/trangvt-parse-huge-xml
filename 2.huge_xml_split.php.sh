@@ -4,61 +4,99 @@
 # Define XML file
 # echo "Please input the XML file name: ";
 # $handle = fopen ("php://stdin","r");
-# $file_name = fgets($handle);
+# $onix_feed = fgets($handle);
+# $onix_feed = trim($onix_feed);
 
-# $file_name = trim($file_name);
-# $file_name = "wiley_3.0_1.20180618.xml.xml";
-$file_name = "formarted.xml";
-$folder_name = "products";
-$products_log = 'products.log';
-$products_log_file = new SplFileObject($products_log, "a");
+$onix_feed_file = "wiley_3.0_1.20180618.xml.xml";
+$onix_feed_path = 'onix_feeds' . DIRECTORY_SEPARATOR . $onix_feed_file;
+# $onix_feed = "formarted.xml";
+
+$error_log = new SplFileObject('errors.log', "a");
+$log_file = new SplFileObject('log.log', "a");
 
 # Validate file
-if(!file_exists($file_name)){
-    $error = 'File ' . $file_name . ' doesnt exist ' . PHP_EOL;
-    echo $error;
-    fwrite($log_file, date("Y-m-d H:i:s"). $error);
+if(!file_exists($onix_feed_path)){
+    $error = date("Y-m-d H:i:s") . ' Error: File ' . $onix_feed_file . ' doesnt exist ' . PHP_EOL;
+    $error_log->fwrite($error);
     return;
 }
 
+# START to split
+$log_file->fwrite(date("Y-m-d H:i:s") . ' Start to spit ' . $onix_feed_file . PHP_EOL);
+
+# Create folder to contains split file
+$spit_product_folder = "products" . DIRECTORY_SEPARATOR . $onix_feed_file;
+if (!file_exists($spit_product_folder)) {
+    mkdir($spit_product_folder, 0777, true);
+}
+$log_file->fwrite(date("Y-m-d H:i:s") . ' Create split product folder ' . $onix_feed_file . PHP_EOL);
+
+# Create products log file
+$products_log = $spit_product_folder . DIRECTORY_SEPARATOR . 'products.log';
+if (!file_exists($products_log)) {
+    $fh = fopen($products_log, 'a+');
+    fclose($fh);
+    chmod($products_log, 0777);
+}
+$products_log_file = new SplFileObject($products_log, "a");
 # Get lastest product
 $lastest_product = '9780471988038';
 
 # Parse file
-$lines = new SplFileObject($file_name);
-$flag = 0;
-$product_file = '';
+$lines = new SplFileObject($onix_feed_path);
+$product_flag = 0;
 $product_xml = '';
+
+$header_flag = 0;
+$header_xml_path = $spit_product_folder . DIRECTORY_SEPARATOR . 'header.xml';
+if (!file_exists($header_xml_path)) {
+    $header_xml_file = new SplFileObject($header_xml_path, "a");
+}
 
 while (!$lines->eof()) {
     $line = $lines->fgets();
 
-    // Open tag
+    if (!empty($header_xml_file)) {
+        // Open header tag
+        if (strpos($line, '<header>') !== false) {
+            $header_flag = 1;
+        }
+
+        if ($header_flag == 1 && $product_flag == 0) {
+            $header_xml_file->fwrite($line);
+        }
+
+        // Close header tag
+        if (strpos($line, '</header>') !== false) {
+            $header_flag = 0;
+            $log_file->fwrite(date("Y-m-d H:i:s") . ' Create ' . $header_xml_path . PHP_EOL);
+        }
+    }
+
+    // Open product tag
     if (strpos($line, '<product>') !== false) {
-        $flag = 1;
+        $product_flag = 1;
         // $product_xml .= $line;
     }
 
-    if ( ($flag == 1) && ($line != NULL) ) {
+    if (($product_flag == 1) && ($line != NULL)) {
         # Find UID
         if (strpos($line, '<a001>') !== false) {
             $pattern = '/<a001>(.*?)<\/a001>/';
             if (preg_match($pattern, $line, $matches)) {
-                $sku = $matches[1];
-                $single_product_name = $folder_name . DIRECTORY_SEPARATOR . $sku.'.xml';
-
+                $uid = $matches[1];
+                $single_product_name = $spit_product_folder . DIRECTORY_SEPARATOR . $uid.'.xml';
                 // Log position
-                $products_log_file->fwrite($sku . PHP_EOL);
+                $products_log_file->fwrite($uid . PHP_EOL);
             }
         }
         $product_xml .= $line;
     }
 
-    // Close tag and write file
+    // Close product tag and write file
     if (strpos($line, '</product>') !== false) {
-        $flag = 0;
+        $product_flag = 0;
         $product_xml .= '</product>' . PHP_EOL;
-
         if (!empty($single_product_name)) {
             $single_product = new SplFileObject($single_product_name, "a");
             $single_product->fwrite($product_xml . PHP_EOL);

@@ -26,6 +26,43 @@ Từ XML lưu data vào DB để có thể đem đi chỗ khác import
 	+ import từng XML 1 vào DB
 	+ DB thiết kế dựa vào v3.0 và v2.1 để có thể lưu tất cả data
 
-4. Thực hiện
+4. Phân tích
+https://cloud.onixedit.com/
+https://onixedit.com/en-us/products/onixedit/onix-tags#onix30
+https://docs.google.com/spreadsheets/d/1N9OqbsprNBYXArs2L28JbYGKyHWWUvFtaSBHpWYQIEo/edit#gid=0
 
+5. ET
+OLD
+	I/O Handling Script function:
+		Read XML file: 12 hours
+		Split to smaller files (SmFs): 8 hours
+		Read SmFs: 16 hours
+	New database for storing information
+		Create a separate database, database structure: 24 hours
+		Save information from X to database: 8 hours
+	Sync information
+		Get data from new database: 16 hours
+		Save to Magento database: 8 hours
+		Reconcile data if missing: 16 hours
+
+NEW
+	1) I/O Handling Script function:
+		Split to smaller files (SmFs): 20 hours
+			+ 1 product parallels 1 xml file (DONE)
+			+ <header> tag parallels 1 xml file
+		Write & read log file: 16 hour
+			+ Because XML file is very huge => it take many time (more than 3 hours) to read line by line and split
+		=> Create .log file to write the product's uuid which were split, so the next time start to split from the lastest uuid
+	2) New database for storing information
+		Create a database, database structure: 32 hours (20%)
+			+ Need to compare v3.0 and v2.1 to create DB structure
+		Save information from SmFs to database: 24 hours (20%)
+
+6. Thực hiện
 https://stackoverflow.com/questions/1652128/accessing-attribute-from-simplexml
+
+if (!file_exists('path/to/directory')) {
+    mkdir('path/to/directory', 0777, true);
+}
+
+$fh = fopen($newfile, 'w') or die("Can't create file");
