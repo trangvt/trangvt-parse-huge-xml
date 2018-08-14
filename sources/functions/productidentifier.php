@@ -18,8 +18,7 @@ function save_productidentifiers($xml, $a001)
         $b244 = (string) $value->b244;
 
         $sql = "SELECT * FROM " . $table . "
-                WHERE a001 = '" . $a001 . "'
-                AND b221 = '" . $b221 . "'
+                WHERE b221 = '" . $b221 . "'
                 AND b233 = '" . $b233 . "'
                 AND b244 = '" . $b244 . "';";
         $find_resutl = $conn->select($sql);
@@ -28,7 +27,6 @@ function save_productidentifiers($xml, $a001)
         }
 
         $data = [
-            'a001' => $a001,
             'b221' => $b221,
             'b233' => $b233,
             'b244' => $b244,

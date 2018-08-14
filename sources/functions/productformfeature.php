@@ -9,6 +9,7 @@ function save_productformfeatures($xml, $a001)
     b335 v3.0 descriptivedetail->productformfeature - 
     b336 v3.0 descriptivedetail->productformfeature - 
      */
+    echo '<pre>';
 
     foreach ($xml as $key => $value) {
         $b334 = (string) $value->b334;
@@ -20,8 +21,7 @@ function save_productformfeatures($xml, $a001)
         }
 
         $sql = "SELECT * FROM " . $table . "
-                WHERE a001 = '" . $a001 . "'
-                AND b334 = '" . $b334 . "'
+                WHERE b334 = '" . $b334 . "'
                 AND b335 = '" . $b335 . "'
                 AND b336 = '" . $b336 . "';";
         $find_resutl = $conn->select($sql);
@@ -30,7 +30,6 @@ function save_productformfeatures($xml, $a001)
         }
 
         $data = [
-            'a001' => $a001,
             'b334' => $b334,
             'b335' => $b335,
             'b336' => $b336,

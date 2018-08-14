@@ -18,7 +18,7 @@ class Database
     {
         $this->servername = "localhost";
         $this->username = "root";
-        $this->password = "root";
+        $this->password = "";
         $this->dbname = "onix";
 
         $this->error_log = new SplFileObject(ERROR_LOG, "a");
@@ -58,6 +58,7 @@ class Database
 
         $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
         echo $sql . PHP_EOL;
+        echo '<br>';
         $result = $this->conn->query($sql);
 
         if (!$result) {
