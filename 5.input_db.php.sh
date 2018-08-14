@@ -15,6 +15,7 @@ require 'sources/functions/epublicense.php';
 require 'sources/functions/productpart.php';
 require 'sources/functions/collection.php';
 require 'sources/functions/supplieridentifier.php';
+require 'sources/functions/discountcoded.php';
 
 $conn = new Database();
 
@@ -90,15 +91,15 @@ foreach($products_xml as $xml_file) {
 
     # Save recordsourceidentifier tags (v3.0)
     $recordsourceidentifier_xml = $xml->xpath('/product/recordsourceidentifier');
-    save_recordsourceidentifiers($recordsourceidentifier_xml, $product['a001']);
+    # save_recordsourceidentifiers($recordsourceidentifier_xml, $product['a001']);
 
     # Save productidentifier tags (v3.0)
     $productidentifier_xml = $xml->xpath('/product/productidentifier');
-    save_productidentifiers($productidentifier_xml, $product['a001']);
+    # save_productidentifiers($productidentifier_xml, $product['a001']);
 
     # Save barcode tags (v3.0)
     $barcode_xml = $xml->xpath('/product/barcode');
-    save_barcodes($barcode_xml, $product['a001']);
+    # save_barcodes($barcode_xml, $product['a001']);
 
     # Save descriptivedetail tags (v3.0)
     $descriptivedetail_xml = $xml->xpath('/product/descriptivedetail');
@@ -106,15 +107,15 @@ foreach($products_xml as $xml_file) {
 
     # Save productformfeature tags (v3.0)
     $productformfeature_xml = $xml->xpath('/product/descriptivedetail/productformfeature');
-    save_productformfeatures($productformfeature_xml, $product['a001']);
+    # save_productformfeatures($productformfeature_xml, $product['a001']);
 
     # Save measure tags (v3.0)
     $measure_xml = $xml->xpath('/product/descriptivedetail/measure');
-    save_measures($measure_xml, $product['a001']);
+    # save_measures($measure_xml, $product['a001']);
 
     # Save epubusageconstraint tags (v3.0)
     $epubusageconstraint_xml = $xml->xpath('/product/descriptivedetail/epubusageconstraint');
-    save_epubusageconstraints($epubusageconstraint_xml, $product['a001']);
+    # save_epubusageconstraints($epubusageconstraint_xml, $product['a001']);
 
     # Save epublicense tags (v3.0)
     $epublicense_xml = $xml->xpath('/product/descriptivedetail/epublicense');
@@ -126,9 +127,13 @@ foreach($products_xml as $xml_file) {
 
     # Save productpart tags (v3.0)
     $productpart_xml = $xml->xpath('/product/descriptivedetail/productpart');
-    save_productparts($productpart_xml, $product['a001']);
+    # save_productparts($productpart_xml, $product['a001']);
 
     # Save supplieridentifier tags (v3.0)
     $supplieridentifier_xml = $xml->xpath('/product/supplydetail/supplier/supplieridentifier');
-    save_productparts($supplieridentifier_xml, $product['a001']);    
+    # save_productparts($supplieridentifier_xml, $product['a001']);
+
+    # Save discountcoded tags (v3.0)
+    $discountcoded_xml = $xml->xpath('/product/supplydetail/price/discountcoded');
+    save_discountcodeds($discountcoded_xml);  
 }
