@@ -7,7 +7,7 @@
 # $onix_feed = fgets($handle);
 # $onix_feed = trim($onix_feed);
 
-// $onix_feed_file = "wiley_3.0_1.20180618.xml.xml";
+# $onix_feed_file = "wiley_3.0_1.20180618.xml.xml";
 $onix_feed_file = "wiley.1.20180716.xml";
 # $onix_feed_file = "formarted.xml";
 $onix_feed_path = 'onix_feeds' . DIRECTORY_SEPARATOR . $onix_feed_file;
@@ -105,13 +105,13 @@ while (!$lines->eof()) {
 
     # Close product tag and write file
     if (strpos($line, '</product>') !== false) {
-        $product_flag = 0;
         if (!empty($single_product_name) && !file_exists($single_product_name)) {
             $single_product = new SplFileObject($single_product_name, "a");
             $single_product->fwrite($product_xml);
         }
 
         # Reset
+        $product_flag = 0;
         $product_xml = '';
     }
 }
