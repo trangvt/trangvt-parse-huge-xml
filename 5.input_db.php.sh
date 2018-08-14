@@ -89,6 +89,12 @@ foreach($products_xml as $xml_file) {
         $conn->insert('products', $product);
     }
 
+    // PREPARE DATA
+    # Save discountcoded tags (v3.0)
+    $discountcoded_xml = $xml->xpath('/product/supplydetail/price/discountcoded');
+    save_discountcodeds($discountcoded_xml); 
+
+    // MAIN TABLES
     # Save recordsourceidentifier tags (v3.0)
     $recordsourceidentifier_xml = $xml->xpath('/product/recordsourceidentifier');
     # save_recordsourceidentifiers($recordsourceidentifier_xml, $product['a001']);
@@ -133,7 +139,5 @@ foreach($products_xml as $xml_file) {
     $supplieridentifier_xml = $xml->xpath('/product/supplydetail/supplier/supplieridentifier');
     # save_productparts($supplieridentifier_xml, $product['a001']);
 
-    # Save discountcoded tags (v3.0)
-    $discountcoded_xml = $xml->xpath('/product/supplydetail/price/discountcoded');
-    save_discountcodeds($discountcoded_xml);  
+ 
 }
