@@ -1,5 +1,6 @@
 /Database - v1.1
 Database - v1.0.zip
 *.log
-/onix_feeds
-/products
+/onix_feeds/
+/products/wiley.1.20180716.xml/
+/products/wiley_3.0_1.20180618.xml.xml/
