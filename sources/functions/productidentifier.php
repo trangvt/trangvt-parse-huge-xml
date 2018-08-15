@@ -1,6 +1,6 @@
 <?php
 
-function save_productidentifiers($xml, $a001)
+function save_productidentifiers($xml)
 {
     $conn = new Database();
     $table = 'productidentifiers';

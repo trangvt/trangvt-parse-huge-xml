@@ -13,15 +13,17 @@ class Database
     private $conn;
 
     private $error_log;
+    private $status_log;
 
     function __construct()
     {
         $this->servername = "localhost";
         $this->username = "root";
-        $this->password = "";
+        $this->password = "root";
         $this->dbname = "onix";
 
         $this->error_log = new SplFileObject(ERROR_LOG, "a");
+        $this->status_log = new SplFileObject(STATUS_LOG, "a");
 
         $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
         if ($this->conn->connect_error) {
@@ -31,6 +33,7 @@ class Database
     }
 
     public function select($sql) {
+        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
         $result = $this->conn->query($sql);
 
         if (!$result) {
@@ -42,6 +45,7 @@ class Database
     }
 
     public function query($sql) {
+        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
         $result = $this->conn->query($sql);
 
         if (!$result) {
@@ -57,8 +61,8 @@ class Database
         $values = implode("', '", array_values($data));
 
         $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
-        echo $sql . PHP_EOL;
-        echo '<br>';
+        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
+
         $result = $this->conn->query($sql);
 
         if (!$result) {

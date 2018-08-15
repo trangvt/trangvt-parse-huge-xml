@@ -1,6 +1,6 @@
 <?php
 
-function save_productformfeatures($xml, $a001)
+function save_productformfeatures($xml)
 {
     $conn = new Database();
     $table = 'productformfeatures';
@@ -9,7 +9,6 @@ function save_productformfeatures($xml, $a001)
     b335 v3.0 descriptivedetail->productformfeature - 
     b336 v3.0 descriptivedetail->productformfeature - 
      */
-    echo '<pre>';
 
     foreach ($xml as $key => $value) {
         $b334 = (string) $value->b334;

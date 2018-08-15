@@ -37,7 +37,7 @@ foreach($products_xml as $xml_file) {
 
     # Check product
     $uuid = basename($xml_file, '.xml');
-    $sql = "SELECT * FROM products WHERE a001 = '" . $uuid . "'";
+    $sql = "SELECT * FROM products WHERE a001 = '" . $uuid . "';";
     $find_product = $conn->select($sql);
     if (!empty($find_product) && $find_product->num_rows > 0) {
         $import_flag = FALSE;
@@ -55,16 +55,6 @@ foreach($products_xml as $xml_file) {
     a199    DeletionText
     a194    RecordSourceType
     a197    RecordSourceName
-
-    x314    v3.0: descriptivedetail - ProductComposition
-    b012    v3.0: descriptivedetail - ProductForm
-            v2.1: ProductForm
-    b057    v3.0: descriptivedetail - CollectionType
-    b058    v3.0: descriptivedetail - EditionStatement (JSON - XHTML is enabled)
-    b083    v3.0: publishingdetail - CountryOfPublication
-    b394    v3.0: publishingdetail - PublishingStatus
-    x512    v3.0: publishingdetail->copyrightstatement - CopyrightType
-    b089    v3.0: publishingdetail->salesrights - SalesRightsType
      */
     
     $product = [
@@ -73,13 +63,6 @@ foreach($products_xml as $xml_file) {
         'a199' => (string) $xml->a199, 
         'a194' => (string) $xml->a194,
         'a197' => (string) $xml->a197,
-        // 'x314' => (string) $xml->descriptivedetail->x314,
-        // 'b012' => (string) $xml->descriptivedetail->x314,
-        // 'b057' => (string) $xml->descriptivedetail->b057,
-        // 'b058' => (string) $xml->descriptivedetail->b058,
-        // 'b083' => (string) $xml->publishingdetail->salesrights->b089,
-        // 'b394' => (string) $xml->publishingdetail->b394,
-        // 'x512' => (string) $xml->publishingdetail->copyrightstatement->x512,
         'created_at' => date("Y-m-d H:i:s"),
         'updated_at' => date("Y-m-d H:i:s")
     ];
@@ -90,42 +73,45 @@ foreach($products_xml as $xml_file) {
     }
 
     // PREPARE DATA
+    # Save all productidentifier tags (v3.0)
+    $productidentifier_xml = $xml->xpath('//productidentifier');
+    save_productidentifiers($productidentifier_xml);
+
+    # Save all productformfeature tags (v3.0)
+    $productformfeature_xml = $xml->xpath('//productformfeature');
+    save_productformfeatures($productformfeature_xml);
+
     # Save discountcoded tags (v3.0)
     $discountcoded_xml = $xml->xpath('/product/supplydetail/price/discountcoded');
-    save_discountcodeds($discountcoded_xml); 
+    save_discountcodeds($discountcoded_xml);
+
+    # Save all epublicenseexpression tags (v3.0)
+    $epublicenseexpression_xml = $xml->xpath('//epublicenseexpression');
+    save_epublicenseexpressions($epublicenseexpression_xml);
+    # Save all epublicense tags (v3.0)
+    $epublicense_xml = $xml->xpath('//epublicense');
+    save_epublicenses($epublicense_xml);
 
     // MAIN TABLES
     # Save recordsourceidentifier tags (v3.0)
     $recordsourceidentifier_xml = $xml->xpath('/product/recordsourceidentifier');
-    # save_recordsourceidentifiers($recordsourceidentifier_xml, $product['a001']);
-
-    # Save productidentifier tags (v3.0)
-    $productidentifier_xml = $xml->xpath('/product/productidentifier');
-    # save_productidentifiers($productidentifier_xml, $product['a001']);
+    save_recordsourceidentifiers($recordsourceidentifier_xml, $product['a001']);
 
     # Save barcode tags (v3.0)
     $barcode_xml = $xml->xpath('/product/barcode');
-    # save_barcodes($barcode_xml, $product['a001']);
+    save_barcodes($barcode_xml, $product['a001']);
 
     # Save descriptivedetail tags (v3.0)
     $descriptivedetail_xml = $xml->xpath('/product/descriptivedetail');
-    # save_descriptivedetails($descriptivedetail_xml, $product['a001']);
-
-    # Save productformfeature tags (v3.0)
-    $productformfeature_xml = $xml->xpath('/product/descriptivedetail/productformfeature');
-    # save_productformfeatures($productformfeature_xml, $product['a001']);
+    // save_descriptivedetails($descriptivedetail_xml, $product['a001']);
 
     # Save measure tags (v3.0)
     $measure_xml = $xml->xpath('/product/descriptivedetail/measure');
-    # save_measures($measure_xml, $product['a001']);
+    save_measures($measure_xml, $product['a001']);
 
     # Save epubusageconstraint tags (v3.0)
     $epubusageconstraint_xml = $xml->xpath('/product/descriptivedetail/epubusageconstraint');
-    # save_epubusageconstraints($epubusageconstraint_xml, $product['a001']);
-
-    # Save epublicense tags (v3.0)
-    $epublicense_xml = $xml->xpath('/product/descriptivedetail/epublicense');
-    # save_epublicenses($epublicense_xml, $product['a001']);
+    save_epubusageconstraints($epubusageconstraint_xml, $product['a001']);
 
     # Save productclassification tags (v3.0)
     $productclassification_xml = $xml->xpath('/product/descriptivedetail/productclassification');
