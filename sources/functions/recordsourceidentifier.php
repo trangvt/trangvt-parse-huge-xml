@@ -1,6 +1,6 @@
 <?php
 
-function save_recordsourceidentifiers($xml, $a001)
+function save_recordsourceidentifier($xml, $a001)
 {
     $conn = new Database();
     $table = 'recordsourceidentifiers';

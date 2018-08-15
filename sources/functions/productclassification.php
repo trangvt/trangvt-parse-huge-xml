@@ -1,6 +1,6 @@
 <?php
 
-function save_productclassifications($xml, $a001)
+function save_productclassification($xml, $a001)
 {
     $conn = new Database();
     $table = 'productclassifications';

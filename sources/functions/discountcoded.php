@@ -1,6 +1,6 @@
 <?php
 
-function save_discountcodeds($xml)
+function save_discountcoded($xml)
 {
     $conn = new Database();
     $table = 'discountcodeds';

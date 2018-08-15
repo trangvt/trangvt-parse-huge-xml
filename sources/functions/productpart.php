@@ -1,6 +1,6 @@
 <?php
 
-function save_productparts($xml, $a001)
+function save_productpart($xml, $a001)
 {
     $conn = new Database();
     $table = 'productparts';

@@ -1,6 +1,6 @@
 <?php
 
-function save_productformfeatures($xml)
+function save_productformfeature($xml)
 {
     $conn = new Database();
     $table = 'productformfeatures';
@@ -15,14 +15,11 @@ function save_productformfeatures($xml)
         $b335 = (string) $value->b335;
         $b336 = (string) $value->b336;
 
-        # Has more than 1 tag
-        if (count($value->b336) > 1) {
-        }
-
         $sql = "SELECT * FROM " . $table . "
-                WHERE b334 = '" . $b334 . "'
-                AND b335 = '" . $b335 . "'
-                AND b336 = '" . $b336 . "';";
+                WHERE b334 = '" . $b334 . "'";
+        $sql .= check_empty('b335' , $b335);
+        $sql .= check_empty('b336' , $b336);
+
         $find_resutl = $conn->select($sql);
         if (!empty($find_resutl) && $find_resutl->num_rows > 0) {
             continue;
@@ -30,12 +27,16 @@ function save_productformfeatures($xml)
 
         $data = [
             'b334' => $b334,
-            'b335' => $b335,
-            'b336' => $b336,
             'created_at' => date("Y-m-d H:i:s"),
             'updated_at' => date("Y-m-d H:i:s")
         ];
 
+        if (!empty($b335)) {
+            $data += ['b335' => $b335];
+        }
+        if (!empty($b336)) {
+            $data += ['b336' => $b336];
+        }
         $conn->insert($table, $data);
     }
 }

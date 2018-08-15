@@ -1,31 +1,23 @@
 <?php
 
-function save_productidentifier($xml)
+function save_nameidentifier($xml)
 {
     $conn = new Database();
-    $table = 'productidentifiers';
+    $table = 'nameidentifiers';
     /*
-    b221    v3.0: productidentifier - ProductIDType
-            v2.1: productidentifier - ProductIDType
-    b233    v3.0: productidentifier - IDTypeName
-    b244    v3.0: productidentifier - IDValue
-            v2.1: productidentifier - IDValue
-    b246    v2.1: productidentifier - Barcode
+    x415            NameIDType
+    b233            IDTypeName
+    b244            IDValue
      */
     foreach ($xml as $key => $value) {
-        $b221 = (string) $value->b221;
+        $x415 = (string) $value->x415;
         $b233 = (string) $value->b233;
         $b244 = (string) $value->b244;
 
         $sql = "SELECT * FROM " . $table . "
-                WHERE b221 = '" . $b221 . "'
+                WHERE x415 = '" . $x415 . "'
                 AND b244 = '" . $b244 . "'";
-
-        if (empty($b233)) {
-            $sql .= "AND b233 IS NULL";
-        } else {
-            $sql .= "AND b233 = '" . $b233 ."'";
-        }
+        $sql .= check_empty('b233' , $b233);
 
         $find_resutl = $conn->select($sql);
         if (!empty($find_resutl) && $find_resutl->num_rows > 0) {
@@ -33,7 +25,7 @@ function save_productidentifier($xml)
         }
 
         $data = [
-            'b221' => $b221,
+            'x415' => $x415,
             'b244' => $b244,
             'created_at' => date("Y-m-d H:i:s"),
             'updated_at' => date("Y-m-d H:i:s")

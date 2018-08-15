@@ -1,6 +1,6 @@
 <?php
 
-function save_epublicenseexpressions($xml)
+function save_epublicenseexpression($xml)
 {
     $conn = new Database();
     $table = 'epublicenseexpressions';
@@ -35,7 +35,7 @@ function save_epublicenseexpressions($xml)
     }
 }
 
-function save_epublicenses($xml)
+function save_epublicense($xml)
 {
     $conn = new Database();
     $table = 'epublicenses';

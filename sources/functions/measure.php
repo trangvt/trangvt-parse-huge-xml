@@ -1,6 +1,6 @@
 <?php
 
-function save_measures($xml, $a001)
+function save_measure($xml, $a001)
 {
     $conn = new Database();
     $table = 'measures';

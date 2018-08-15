@@ -33,11 +33,11 @@ class Database
     }
 
     public function select($sql) {
-        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
+        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' === '. $sql . PHP_EOL);
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . $sql . PHP_EOL);
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
             return;
         }
 
@@ -45,11 +45,11 @@ class Database
     }
 
     public function query($sql) {
-        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
+        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' === '. $sql . PHP_EOL);
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . $sql . PHP_EOL);
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
             return;
         }
 
@@ -61,15 +61,32 @@ class Database
         $values = implode("', '", array_values($data));
 
         $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
+        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' === '. $sql . PHP_EOL);
+
+        $result = $this->conn->query($sql);
+
+        if (!$result) {
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
+            return;
+        }
+
+        return $result;
+    }
+
+    public function insert_return_id($table, $data) {
+        $keys = implode(', ', array_keys($data));
+        $values = implode("', '", array_values($data));
+
+        $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
         $this->status_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
 
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . $sql . PHP_EOL);
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
             return;
         }
 
-        return $result;
+        return $this->conn->insert_id;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-function save_barcodes($xml, $a001)
+function save_barcode($xml, $a001)
 {
     $conn = new Database();
     $table = 'barcodes';

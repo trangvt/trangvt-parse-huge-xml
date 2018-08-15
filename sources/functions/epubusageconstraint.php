@@ -1,6 +1,6 @@
 <?php
 
-function save_epubusageconstraints($xml, $a001)
+function save_epubusageconstraint($xml, $a001)
 {
     $conn = new Database();
     $table = 'epubusageconstraints';
