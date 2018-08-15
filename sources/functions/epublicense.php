@@ -101,7 +101,6 @@ function save_epublicenses($xml)
                         WHERE x511 = '" . $text . "'
                         AND language = '" . $lang . "'
                         AND epublicenseexpression_id IS NULL;";
-                var_dump($sql);
                 $find_resutl = $conn->select($sql);
                 if (!empty($find_resutl) && $find_resutl->num_rows > 0) {
                     continue;

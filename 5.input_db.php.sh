@@ -12,6 +12,7 @@ require 'sources/functions/productformfeature.php';
 require 'sources/functions/measure.php';
 require 'sources/functions/epubusageconstraint.php';
 require 'sources/functions/epublicense.php';
+require 'sources/functions/productclassification.php';
 require 'sources/functions/productpart.php';
 require 'sources/functions/collection.php';
 require 'sources/functions/supplieridentifier.php';
@@ -115,11 +116,11 @@ foreach($products_xml as $xml_file) {
 
     # Save productclassification tags (v3.0)
     $productclassification_xml = $xml->xpath('/product/descriptivedetail/productclassification');
-    # save_productclassifications($productclassification_xml, $product['a001']);
+    save_productclassifications($productclassification_xml, $product['a001']);
 
     # Save productpart tags (v3.0)
     $productpart_xml = $xml->xpath('/product/descriptivedetail/productpart');
-    # save_productparts($productpart_xml, $product['a001']);
+    save_productparts($productpart_xml, $product['a001']);
 
     # Save supplieridentifier tags (v3.0)
     $supplieridentifier_xml = $xml->xpath('/product/supplydetail/supplier/supplieridentifier');
