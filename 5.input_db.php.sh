@@ -23,8 +23,11 @@ require 'sources/functions/collectionsequence.php';
 require 'sources/functions/titleelement.php';
 
 require 'sources/functions/nameidentifier.php';
+require 'sources/functions/contributordate.php';
 
+require 'sources/functions/supplier.php';
 require 'sources/functions/supplieridentifier.php';
+require 'sources/functions/website.php';
 require 'sources/functions/discountcoded.php';
 
 $conn = new Database();
@@ -117,6 +120,25 @@ foreach($products_xml as $xml_file) {
     $nameidentifier = $xml->xpath('//nameidentifier');
     save_nameidentifier($nameidentifier);
 
+    # Save all alternativename tags (v3.0)
+    $alternativename = $xml->xpath('//alternativename');
+    # save_alternativename($alternativename);
+
+    # Save all contributordate tags (v3.0)
+    $contributordate = $xml->xpath('//contributordate');
+    save_contributordate($contributordate);
+
+    # Save all supplieridentifier tags (v3.0)
+    $supplieridentifier = $xml->xpath('//supplieridentifier');
+    save_supplieridentifier($supplieridentifier);
+
+    # Save all website tags (v3.0)
+    $website = $xml->xpath('//website');
+    save_website($website);
+
+    # Save supplier tags (v3.0)
+    $supplier = $xml->xpath('/product/supplydetail/supplier');
+    save_supplier($supplier, $product['a001']);
     // -----------------------MAIN TABLES----------------------------------
     # Save recordsourceidentifier tags (v3.0)
     $recordsourceidentifier = $xml->xpath('/product/recordsourceidentifier');
@@ -145,10 +167,4 @@ foreach($products_xml as $xml_file) {
     # Save productpart tags (v3.0)
     $productpart = $xml->xpath('/product/descriptivedetail/productpart');
     save_productpart($productpart, $product['a001']);
-
-    # Save supplieridentifier tags (v3.0)
-    $supplieridentifier = $xml->xpath('/product/supplydetail/supplier/supplieridentifier');
-    # save_productpart($supplieridentifier, $product['a001']);
-
- 
 }

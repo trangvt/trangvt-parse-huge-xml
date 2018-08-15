@@ -1,34 +1,40 @@
 <?php
 
-function save_supplieridentifiers($xml, $a001)
+function save_supplieridentifier($xml)
 {
     $conn = new Database();
     $table = 'supplieridentifiers';
     /*
-    x312    v3.0: barcode - BarcodeType
-    x313    v3.0: barcode - PositionOnProduct
+    j345
+    b233
+    b244
      */
     
     foreach ($xml as $key => $value) {
-        $x312 = (string) $value->x312;
-        $x313 = (string) $value->x313;
+        $j345 = (string) $value->j345;
+        $b233 = (string) $value->b233;
+        $b244 = (string) $value->b244;
 
         $sql = "SELECT * FROM " . $table . "
-                WHERE a001 = '" . $a001 . "'
-                AND x312 = '" . $x312 . "'
-                AND x313 = '" . $x313 . "';";
+                WHERE j345 = '" . $j345 . "'
+                AND b244 = '" . $b244 . "'";
+        $sql .= check_empty('b233' , $b233);
+
         $find_resutl = $conn->select($sql);
         if (!empty($find_resutl) && $find_resutl->num_rows > 0) {
             continue;
         }
 
         $data = [
-            'a001' => $a001,
-            'x312' => $x312,
-            'x313' => $x313,
+            'j345' => $j345,
+            'b244' => $b244,
             'created_at' => date("Y-m-d H:i:s"),
             'updated_at' => date("Y-m-d H:i:s")
         ];
+
+        if (!empty($b233)) {
+            $data += ['b233' => $b233];
+        }
 
         $conn->insert($table, $data);
     }

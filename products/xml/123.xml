@@ -1,0 +1,126 @@
+<product>
+    <a001>123</a001>
+    <a002>03</a002>
+    <productidentifier>
+        <b221>22</b221>
+        <b244>productidentifier - b244</b244>
+    </productidentifier>
+    <barcode>
+        <x312>03</x312>
+        <x313>01</x313>
+    </barcode>
+    <barcode>
+        <x312>13</x312>
+        <x313>11</x313>
+    </barcode>
+    <descriptivedetail>
+        <productformfeature>
+            <b334>12</b334>
+            <b335>descriptivedetail - productformfeature</b335>
+        </productformfeature>
+        <epubusageconstraint>
+            <x318>11</x318>
+            <x319>22</x319>
+            <epubusagelimit>
+                <x320>vvvvvvvv</x320>
+                <x321>56</x321>
+            </epubusagelimit>
+            <epubusagelimit>
+                <x320>87</x320>
+                <x321>99</x321>
+            </epubusagelimit>
+        </epubusageconstraint>
+        <epublicense>
+            <x511>mypublisher</x511>
+        </epublicense>
+        <productpart>
+            <b012>BB</b012>
+            <x322>3</x322>
+            <productidentifier>
+                <b221>44</b221>
+                <b233>This is first b233 in product part</b233>
+                <b244>x</b244>
+            </productidentifier>
+            <productidentifier>
+                <b221>89</b221>
+                <b233>This is second b233 in product part</b233>
+                <b244>t</b244>
+            </productidentifier>
+            <productformfeature>
+                <b334>23</b334>
+                <b335>productpart</b335>
+            </productformfeature>
+        </productpart>
+        <collection>
+            <collectionidentifier>
+                <x344>23</x344>
+                <b233>collection</b233>
+                <b244>collection-b244</b244>
+            </collectionidentifier>
+            <collectionsequence>
+                <x479>12</x479>
+                <x480>12 CollectionSequenceTypeName</x480>
+                <x481>12 CollectionSequenceNumber</x481>
+            </collectionsequence>
+            <collectionsequence>
+                <x479>13</x479>
+                <x480>12 2 CollectionSequenceTypeName</x480>
+                <x481>12 2 CollectionSequenceNumber</x481>
+            </collectionsequence>
+            <titledetail>
+                <titleelement>
+                    <x409>12</x409>
+                </titleelement>
+            </titledetail>
+        </collection>
+
+        <titledetail>
+            <titleelement>
+                <b034>123</b034>
+                <x409>12</x409>
+                <x410>12 titleelement 410</x410>
+                <b020>1991</b020>
+                <b203>12 titledetail titleelement 203</b203>
+                <b030>12 titleelement 30</b030>
+                <x501/>
+                <b031>12 TitleWithoutPrefix</b031>
+                <b029>12 Subtitle</b029>
+            </titleelement>
+        </titledetail>
+
+        <contributor>
+            <alternativename>
+                <x414></x414>
+                <x415></x415>
+                <b233></b233>
+                <b244></b244>
+            </alternativename>
+            <contributordate>
+                <x417>12</x417>
+                <b306>20181010</b306>
+            </contributordate>
+        </contributor>
+    </descriptivedetail>
+    <supplier>
+        <supplieridentifier>
+            <j345>12</j345>
+            <b233>123 supplieridentifier b233</b233>
+            <b244>12b244</b244>
+        </supplieridentifier>
+        <supplieridentifier>
+            <j345>12</j345>
+            <b233>123 supplieridentifier second b233</b233>
+            <b244>12b244</b244>
+        </supplieridentifier>
+    </supplier>
+    <supplydetail>
+        <website >
+            <b367>12</b367>
+            <b294>12 supplydetail website</b294>
+            <b295>12 295 supplydetail website</b295>
+        </website>
+        <website >
+            <b295>12 295 supplydetail website</b295>
+        </website>
+    </supplydetail>
+</product>

@@ -1,21 +1,21 @@
 <?php
 
-function save_nameidentifier($xml)
+function save_supplier($xml)
 {
     $conn = new Database();
-    $table = 'nameidentifiers';
+    $table = 'suppliers';
     /*
-    x415            NameIDType
-    b233            IDTypeName
-    b244            IDValue
+    j292
+    j137
      */
+    
     foreach ($xml as $key => $value) {
-        $x415 = (string) $value->x415;
+        $j345 = (string) $value->j345;
         $b233 = (string) $value->b233;
         $b244 = (string) $value->b244;
 
         $sql = "SELECT * FROM " . $table . "
-                WHERE x415 = '" . $x415 . "'
+                WHERE j345 = '" . $j345 . "'
                 AND b244 = '" . $b244 . "'";
         $sql .= check_empty('b233' , $b233);
 
@@ -25,7 +25,7 @@ function save_nameidentifier($xml)
         }
 
         $data = [
-            'x415' => $x415,
+            'j345' => $j345,
             'b244' => $b244,
             'created_at' => date("Y-m-d H:i:s"),
             'updated_at' => date("Y-m-d H:i:s")
