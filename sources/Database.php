@@ -13,17 +13,17 @@ class Database
     private $conn;
 
     private $error_log;
-    private $status_log;
+    private $sql_log;
 
     function __construct()
     {
         $this->servername = "localhost";
         $this->username = "root";
-        $this->password = "root";
+        $this->password = "";
         $this->dbname = "onix";
 
         $this->error_log = new SplFileObject(ERROR_LOG, "a");
-        $this->status_log = new SplFileObject(STATUS_LOG, "a");
+        $this->sql_log = new SplFileObject(SQL_LOG, "a");
 
         $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
         if ($this->conn->connect_error) {
@@ -33,11 +33,11 @@ class Database
     }
 
     public function select($sql) {
-        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' === '. $sql . PHP_EOL);
+        $this->sql_log->fwrite(date("Y-m-d H:i:s") . PHP_EOL. $sql . PHP_EOL);
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . PHP_EOL. $sql . PHP_EOL);
             return;
         }
 
@@ -45,11 +45,11 @@ class Database
     }
 
     public function query($sql) {
-        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' === '. $sql . PHP_EOL);
+        $this->sql_log->fwrite(date("Y-m-d H:i:s") . PHP_EOL. $sql . PHP_EOL);
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . PHP_EOL. $sql . PHP_EOL);
             return;
         }
 
@@ -61,12 +61,12 @@ class Database
         $values = implode("', '", array_values($data));
 
         $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
-        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' === '. $sql . PHP_EOL);
+        $this->sql_log->fwrite(date("Y-m-d H:i:s") . PHP_EOL. $sql . PHP_EOL);
 
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . PHP_EOL. $sql . PHP_EOL);
             return;
         }
 
@@ -78,12 +78,12 @@ class Database
         $values = implode("', '", array_values($data));
 
         $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES ('" . $values . "');";
-        $this->status_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
+        $this->sql_log->fwrite(date("Y-m-d H:i:s") . ' '. $sql . PHP_EOL);
 
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . ' === '. $sql . PHP_EOL);
+            $this->error_log->fwrite(date("Y-m-d H:i:s") . ' Error sql: '. $this->conn->error . PHP_EOL. $sql . PHP_EOL);
             return;
         }
 

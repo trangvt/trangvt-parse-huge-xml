@@ -1,18 +1,33 @@
 <?php
+
 # Instantiate DB
 require 'sources/Database.php';
-# Add sub functions
+require 'sources/common_functions.php';
+require 'sources/functions/product.php';
 require 'sources/functions/recordsourceidentifier.php';
 require 'sources/functions/productidentifier.php';
+require 'sources/functions/containeditem.php';
 require 'sources/functions/barcode.php';
 require 'sources/functions/descriptivedetail.php';
 require 'sources/functions/productformfeature.php';
 require 'sources/functions/measure.php';
 require 'sources/functions/epubusageconstraint.php';
 require 'sources/functions/epublicense.php';
+require 'sources/functions/productclassification.php';
 require 'sources/functions/productpart.php';
+
 require 'sources/functions/collection.php';
+require 'sources/functions/collectionidentifier.php';
+require 'sources/functions/collectionsequence.php';
+
+require 'sources/functions/titleelement.php';
+
+require 'sources/functions/nameidentifier.php';
+require 'sources/functions/contributordate.php';
+
+require 'sources/functions/supplier.php';
 require 'sources/functions/supplieridentifier.php';
+require 'sources/functions/website.php';
 require 'sources/functions/discountcoded.php';
 
 $conn = new Database();
@@ -35,108 +50,106 @@ foreach($products_xml as $xml_file) {
 
     # Check product
     $uuid = basename($xml_file, '.xml');
-    $sql = "SELECT * FROM products WHERE a001 = '" . $uuid . "'";
+    $sql = "SELECT * FROM products WHERE a001 = '" . $uuid . "';";
     $find_product = $conn->select($sql);
     if (!empty($find_product) && $find_product->num_rows > 0) {
         $import_flag = FALSE;
-        $error_log->fwrite(date("Y-m-d H:i:s") . ' Notice: Product exists with UUID = '. $uuid . PHP_EOL);
+        // $error_log->fwrite(date("Y-m-d H:i:s") . ' Notice: Product exists with UUID = '. $uuid . PHP_EOL);
         // continue;
     }
 
-    $status_log->fwrite(date("Y-m-d H:i:s") . ' START to import UUID = '. $uuid . PHP_EOL);
-
     # Parse data
     $xml = simplexml_load_file($xml_file);
-    /*
-    a001    RecordReference
-    a002    NotificationType
-    a199    DeletionText
-    a194    RecordSourceType
-    a197    RecordSourceName
-
-    x314    v3.0: descriptivedetail - ProductComposition
-    b012    v3.0: descriptivedetail - ProductForm
-            v2.1: ProductForm
-    b057    v3.0: descriptivedetail - CollectionType
-    b058    v3.0: descriptivedetail - EditionStatement (JSON - XHTML is enabled)
-    b083    v3.0: publishingdetail - CountryOfPublication
-    b394    v3.0: publishingdetail - PublishingStatus
-    x512    v3.0: publishingdetail->copyrightstatement - CopyrightType
-    b089    v3.0: publishingdetail->salesrights - SalesRightsType
-     */
-    
-    $product = [
-        'a001' => (string) $xml->a001,
-        'a002' => (string) $xml->a002,
-        'a199' => (string) $xml->a199, 
-        'a194' => (string) $xml->a194,
-        'a197' => (string) $xml->a197,
-        // 'x314' => (string) $xml->descriptivedetail->x314,
-        // 'b012' => (string) $xml->descriptivedetail->x314,
-        // 'b057' => (string) $xml->descriptivedetail->b057,
-        // 'b058' => (string) $xml->descriptivedetail->b058,
-        // 'b083' => (string) $xml->publishingdetail->salesrights->b089,
-        // 'b394' => (string) $xml->publishingdetail->b394,
-        // 'x512' => (string) $xml->publishingdetail->copyrightstatement->x512,
-        'created_at' => date("Y-m-d H:i:s"),
-        'updated_at' => date("Y-m-d H:i:s")
-    ];
-
     # Save to products table
     if ($import_flag == TRUE) {
-        $conn->insert('products', $product);
+        $status_log->fwrite(date("Y-m-d H:i:s") . ' START to import UUID = '. $uuid . PHP_EOL);
+        save_product($xml);
     }
 
-    // PREPARE DATA
-    # Save all discountcoded tags (v3.0)
-    $discountcoded_xml = $xml->xpath('/product/supplydetail/price/discountcoded');
-    # save_discountcodeds($discountcoded_xml);
+    // -----------------------------PREPARE DATA--------------------------------
+    # Save all productidentifier tags (v3.0)
+    $productidentifier = $xml->xpath('//productidentifier');
+    save_productidentifier($productidentifier);
 
     # Save all productformfeature tags (v3.0)
-    $productformfeature_xml = $xml->xpath('//productformfeature');
-    save_productformfeatures($productformfeature_xml, $product['a001']);
+    $productformfeature = $xml->xpath('//productformfeature');
+    save_productformfeature($productformfeature);
 
-    // MAIN TABLES
+    # Save discountcoded tags (v3.0)
+    $discountcoded = $xml->xpath('/product/supplydetail/price/discountcoded');
+    save_discountcoded($discountcoded);
+
+    # Save all epublicenseexpression tags (v3.0)
+    $epublicenseexpression = $xml->xpath('//epublicenseexpression');
+    save_epublicenseexpression($epublicenseexpression);
+    # Save all epublicense tags (v3.0)
+    $epublicense = $xml->xpath('//epublicense');
+    save_epublicense($epublicense);
+
+    # Save all collectionidentifier tags (v3.0)
+    $collectionidentifier = $xml->xpath('//collectionidentifier');
+    save_collectionidentifier($collectionidentifier);
+    # Save all collectionsequence tags (v3.0)
+    $collectionsequence = $xml->xpath('//collectionsequence');
+    save_collectionsequence($collectionsequence);
+
+    # Save all titleelement tags (v3.0)
+    $titleelement = $xml->xpath('//titleelement');
+    save_titleelement($titleelement);
+
+    # Save all nameidentifier tags (v3.0)
+    $nameidentifier = $xml->xpath('//nameidentifier');
+    save_nameidentifier($nameidentifier);
+
+    # Save all alternativename tags (v3.0)
+    $alternativename = $xml->xpath('//alternativename');
+    # save_alternativename($alternativename);
+
+    # Save all contributordate tags (v3.0)
+    $contributordate = $xml->xpath('//contributordate');
+    save_contributordate($contributordate);
+
+    # Save all supplieridentifier tags (v3.0)
+    $supplieridentifier = $xml->xpath('//supplieridentifier');
+    save_supplieridentifier($supplieridentifier);
+
+    # Save all website tags (v3.0)
+    $website = $xml->xpath('//website');
+    save_website($website);
+
+    # Save supplier tags (v3.0)
+    $supplier = $xml->xpath('/product/supplydetail/supplier');
+    save_supplier($supplier, $uuid);
+    // -----------------------MAIN TABLES----------------------------------
+
+    save_productform($xml);
+    save_product_productformfeature($xml);
+
     # Save recordsourceidentifier tags (v3.0)
-    $recordsourceidentifier_xml = $xml->xpath('/product/recordsourceidentifier');
-    save_recordsourceidentifiers($recordsourceidentifier_xml, $product['a001']);
-
-    # Save productidentifier tags (v3.0)
-    $productidentifier_xml = $xml->xpath('/product/productidentifier');
-    save_productidentifiers($productidentifier_xml, $product['a001']);
+    $recordsourceidentifier = $xml->xpath('/product/recordsourceidentifier');
+    save_recordsourceidentifier($recordsourceidentifier, $uuid);
 
     # Save barcode tags (v3.0)
-    $barcode_xml = $xml->xpath('/product/barcode');
-    save_barcodes($barcode_xml, $product['a001']);
+    $barcode = $xml->xpath('/product/barcode');
+    save_barcode($barcode, $uuid);
 
     # Save descriptivedetail tags (v3.0)
-    $descriptivedetail_xml = $xml->xpath('/product/descriptivedetail');
-    # save_descriptivedetails($descriptivedetail_xml, $product['a001']);
-
+    $descriptivedetail = $xml->xpath('/product/descriptivedetail');
+    // save_descriptivedetail($descriptivedetail, $uuid);
 
     # Save measure tags (v3.0)
-    $measure_xml = $xml->xpath('/product/descriptivedetail/measure');
-    # save_measures($measure_xml, $product['a001']);
+    $measure = $xml->xpath('//measure');
+    save_measure($measure, $uuid);
 
     # Save epubusageconstraint tags (v3.0)
-    $epubusageconstraint_xml = $xml->xpath('/product/descriptivedetail/epubusageconstraint');
-    # save_epubusageconstraints($epubusageconstraint_xml, $product['a001']);
-
-    # Save epublicense tags (v3.0)
-    $epublicense_xml = $xml->xpath('/product/descriptivedetail/epublicense');
-    # save_epublicenses($epublicense_xml, $product['a001']);
+    $epubusageconstraint = $xml->xpath('/product/descriptivedetail/epubusageconstraint');
+    save_epubusageconstraint($epubusageconstraint, $uuid);
 
     # Save productclassification tags (v3.0)
-    $productclassification_xml = $xml->xpath('/product/descriptivedetail/productclassification');
-    # save_productclassifications($productclassification_xml, $product['a001']);
+    $productclassification = $xml->xpath('/product/descriptivedetail/productclassification');
+    save_productclassification($productclassification, $uuid);
 
     # Save productpart tags (v3.0)
-    $productpart_xml = $xml->xpath('/product/descriptivedetail/productpart');
-    # save_productparts($productpart_xml, $product['a001']);
-
-    # Save supplieridentifier tags (v3.0)
-    $supplieridentifier_xml = $xml->xpath('/product/supplydetail/supplier/supplieridentifier');
-    # save_productparts($supplieridentifier_xml, $product['a001']);
-
- 
+    $productpart = $xml->xpath('/product/descriptivedetail/productpart');
+    save_productpart($productpart, $uuid);
 }

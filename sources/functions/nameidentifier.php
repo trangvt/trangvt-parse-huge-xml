@@ -17,7 +17,7 @@ function save_nameidentifier($xml)
         $sql = "SELECT * FROM " . $table . "
                 WHERE x415 = '" . $x415 . "'
                 AND b244 = '" . $b244 . "'";
-        $sql .= check_empty('b233' , $b233);
+        $sql .= check_empty('b233', $b233);
 
         $find_resutl = $conn->select($sql);
         if (!empty($find_resutl) && $find_resutl->num_rows > 0) {
